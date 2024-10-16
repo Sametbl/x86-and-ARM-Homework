@@ -1,28 +1,32 @@
 ; LUONG THANH VY (2151280)
 ORG 100h
-x             DW 0            
-y             DW 0                
+a             DW 0            
+b             DW 0                
 result_quo    DW 0   
 result_remain DW 0   
      
+          
+; Solving euation:   ax + b = 0
+; Prompt two 1-digit number in range [-9,9]:  a, b
+LEA   DX, [intro_msg]                                  
+CALL  Print_string   ; Print introduction message
 
-; Prompt two 1-digit number in range [-9,9]:  x, y
-LEA   DX, [prompt_X]
+LEA   DX, [prompt_a]                                  
 CALL  Print_string   ; Print prompt message
 CALL  Enter_input    ; Read input from keyboard to CX
-MOV   [x], CX 
+MOV   [a], CX 
 
-LEA   DX, [prompt_Y]
+LEA   DX, [prompt_b]
 CALL  Print_string
 CALL  Enter_input   
-MOV   [y], CX   
+MOV   [b], CX   
 
 
-; Calculate -x/y
-MOV   AX, [x]
-NEG   AX            ; AX = -x
-MOV   BX, [y]       ; BL = BX = y
-IDIV  BL            ; AX/BL = -x/y
+; Calculate -b/a
+MOV   AX, [b]       ;  AL =  AX = b
+NEG   AX            ; -AL = -AX = -b
+MOV   BX, [a]       ;  BL =  BX = a
+IDIV  BL            ; -AL/BL = -AX/BL = -b/a
                     ; AL = Quotient   (AL < 10) 
                     ; AH = Remainder  (AH < 10)   
 MOV   CH, AL                ; CX = {AL, 0x0000}
@@ -129,11 +133,13 @@ Print_Num:
 
 ; 0Dh: Carriage return (moves the cursor to the beginning of the current line).
 ; 0Ah: Line feed (moves the cursor to the next line).
-; Combine: 0Dh + 0Ah = newline
-prompt_x           DB 'Enter value for x in range [-9,9]: $'
-prompt_y           DB 0Dh, 0Ah, 'Enter value for y in range [-9,9]: $'     
-result_quo_msg     DB 0Dh, 0Ah, 'The Quotient of -x/y is: $' 
-result_remain_msg  DB 0Dh, 0Ah, 'The Remainder of -x/y is: $' 
+; Combine: 0Dh + 0Ah = newline 
+intro_msg          DB 'Solve first degreee equation:   ax + b = 0 $'
+prompt_a           DB 0Dh, 0Ah, 'Enter value for a in range [-9,9]: $'
+prompt_b           DB 0Dh, 0Ah, 'Enter value for b in range [-9,9]: $'     
+result_quo_msg     DB 0Dh, 0Ah, 'The Quotient of -b/a is: $' 
+result_remain_msg  DB 0Dh, 0Ah, 'The Remainder of -b/a is: $'     
+
 invalid_msg        DB 0Dh, 0Ah
                    DB 'Invalid input, only one digit and numberic character is allowed.'
                    DB 0Dh, 0Ah
